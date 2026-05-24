@@ -13,7 +13,6 @@
   --light-grey: #ebebeb;
   --medium-grey: #d3d3d3;
   --dark-grey: #666666;
-  /* Accent palette: derived from LCBO digital presence */
   --forest: #2D5F3E;
   --forest-light: #E8F0EB;
   --forest-muted: #3A7A50;
@@ -46,15 +45,12 @@ body {
 .slide-bg-img::after {
   content: ''; position: absolute; inset: 0;
 }
-/* Dark slides: image fades into dark left */
 .slide.dark .slide-bg-img::after {
   background: linear-gradient(to right, var(--soft-black) 0%, rgba(34,34,34,0.7) 40%, rgba(34,34,34,0.2) 100%);
 }
-/* Forest slides: image fades into forest left */
 .slide.forest .slide-bg-img::after {
   background: linear-gradient(to right, var(--forest) 0%, rgba(45,95,62,0.75) 40%, rgba(45,95,62,0.15) 100%);
 }
-/* Light/warm slides: subtle corner accent */
 .slide-accent-img {
   position: absolute; z-index: 1;
   border-radius: 6px; overflow: hidden;
@@ -64,28 +60,24 @@ body {
   width: 100%; height: 100%; object-fit: cover;
   display: block;
 }
-/* Light slide top-right accent */
 .slide-accent-tr {
   top: 40px; right: 40px; width: 200px; height: 130px;
   opacity: 0;
   transition: opacity 0.8s 0.6s ease;
 }
 .slide-accent-tr.visible { opacity: 0.85; }
-/* Warm slide bottom-right inset */
 .slide-accent-br {
   bottom: 40px; right: 40px; width: 220px; height: 140px;
   opacity: 0;
   transition: opacity 0.8s 0.5s ease;
 }
 .slide-accent-br.visible { opacity: 0.8; }
-/* Full-width muted banner below content */
 .slide-banner-img {
   position: absolute; bottom: 0; left: 0; right: 0;
   height: 120px; z-index: 1;
   background-size: cover; background-position: center;
   opacity: 0.12;
 }
-/* Inline image card */
 .img-card {
   border-radius: 6px; overflow: hidden;
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
@@ -143,7 +135,6 @@ body {
 
 .slide-inner { padding: 64px 80px; position: relative; z-index: 2; }
 
-/* Themes */
 .slide.dark { background: var(--soft-black); color: var(--white); }
 .slide.light { background: var(--white); color: var(--soft-black); }
 .slide.warm { background: var(--warm-white); color: var(--soft-black); }
@@ -184,11 +175,27 @@ body {
   100% { background-position: 200% 0; }
 }
 
-.anim-item { opacity: 0; }
+.anim-item {
+  opacity: 0;
+  will-change: transform, opacity;
+}
 .anim-item.visible { animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .anim-fade.visible { animation: fadeIn 0.6s ease forwards; }
 .anim-scale.visible { animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .anim-slide.visible { animation: slideRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .anim-item { opacity: 1; transform: none; }
+  .slide-accent-tr, .slide-accent-br { opacity: 0.85; }
+  .divider-inner { width: 56px; }
+}
 
 /* Stagger delays */
 .d1 { animation-delay: 0.1s !important; }
@@ -251,13 +258,19 @@ body {
   border-radius: 6px;
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+.metric-card:hover {
+  transform: translateY(-2px);
 }
 .metric-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
 }
 .slide.dark .metric-card { background: rgba(255,255,255,0.04); }
+.slide.dark .metric-card:hover { background: rgba(255,255,255,0.06); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
 .slide.dark .metric-card::before { background: var(--amber); }
 .slide.warm .metric-card { background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.slide.warm .metric-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
 .slide.warm .metric-card::before { background: var(--forest); }
 .metric-value {
   font-family: var(--serif); font-size: 36px; line-height: 1; margin-bottom: 8px;
@@ -505,14 +518,15 @@ body.fullscreen .speaker-notes { display: none; }
 <div class="nav">
   <div class="nav-brand">Perry Ham</div>
   <div class="nav-controls">
-    <button onclick="prevSlide()">←</button>
+    <button onclick="prevSlide()">&#8592;</button>
     <span class="nav-counter" id="slideCounter">1 / 8</span>
-    <button onclick="nextSlide()">→</button>
+    <button onclick="nextSlide()">&#8594;</button>
     <button onclick="toggleFullscreen()">Fullscreen</button>
   </div>
 </div>
 <div class="progress-bar" id="progressBar" style="width:12.5%"></div>
 
+<!-- ==================== SLIDE 1: TITLE ==================== -->
 <div class="slide-container" id="slide-1">
   <div class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
     <div class="slide-bg-img" style="background-image:url('s1.jpg');"></div>
@@ -526,7 +540,7 @@ body.fullscreen .speaker-notes { display: none; }
       <p class="slide-subtitle anim-item d4 visible">A 90-Day Recovery Plan</p>
     </div>
     <div class="cover-meta">
-      <div class="cover-author anim-item anim-fade d6 visible">Perry Ham · CDMP · PMP</div>
+      <div class="cover-author anim-item anim-fade d6 visible">Perry Ham &middot; CDMP &middot; PMP</div>
       <div class="cover-date anim-item anim-fade d7 visible">May 25, 2026</div>
     </div>
   </div>
@@ -539,6 +553,7 @@ body.fullscreen .speaker-notes { display: none; }
   </div>
 </div>
 
+<!-- ==================== SLIDE 2: THE PATTERN ==================== -->
 <div class="slide-container" id="slide-2">
   <div class="slide warm">
     <div class="slide-accent-img slide-accent-br anim-item d9" style="width:240px;height:150px;bottom:44px;right:44px;border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,0.06);"><img src="s2.jpg" alt=""></div>
@@ -554,7 +569,7 @@ body.fullscreen .speaker-notes { display: none; }
       </p>
       <div class="metrics-row">
         <div class="metric-card anim-item anim-scale d5">
-          <div class="metric-value">1.2 → 3.4</div>
+          <div class="metric-value">1.2 &rarr; 3.4</div>
           <div class="metric-desc">Maturity Uplift</div>
         </div>
         <div class="metric-card anim-item anim-scale d6">
@@ -581,6 +596,7 @@ body.fullscreen .speaker-notes { display: none; }
   </div>
 </div>
 
+<!-- ==================== SLIDE 3: DIAGNOSIS ==================== -->
 <div class="slide-container" id="slide-3">
   <div class="slide light">
     <div class="slide-accent-img slide-accent-tr anim-item d9" style="width:180px;height:120px;top:36px;right:44px;border:none;box-shadow:none;"><img src="s3.jpg" alt="" style="opacity:0.6;"></div>
@@ -624,10 +640,11 @@ body.fullscreen .speaker-notes { display: none; }
     <p><strong>Timing: 3 minutes.</strong> Walk through symptoms briefly (30 sec), then spend time on root causes.</p>
     <p><strong>RC1:</strong> "At my current organization, the governance wiki had ~200 artifacts and no adoption when I arrived. I rebuilt it around use cases that solved real problems. It grew to 1,298 artifacts because it was useful, not mandatory."</p>
     <p><strong>RC2:</strong> "I documented $1.3M in business value: $201K/year in automation savings plus ~$1M in vendor cost avoidance. That number protected the program when budgets tightened."</p>
-    <p><strong>RC3:</strong> "I embedded governance into tier-one delivery projects. When governance lives inside delivery, it stops being a gate and becomes a tool."</p>
+    <p><strong>RC3:</strong> "I embedded governance into tier-one delivery projects. When governance lives inside delivery, it stops being a gate and becomes a tool. I also governed data through a live platform migration, moving from Synapse to Databricks, and performed regression testing in UAT to ensure data integrity survived the transition. That is the same challenge you face post-SAP."</p>
   </div>
 </div>
 
+<!-- ==================== SLIDE 4: RECOVERY PLAN ==================== -->
 <div class="slide-container" id="slide-4">
   <div class="slide light">
     <div class="slide-banner-img" style="background-image:url('s4.jpg');height:100px;opacity:0.08;"></div>
@@ -685,11 +702,13 @@ body.fullscreen .speaker-notes { display: none; }
   <div class="notes-content">
     <p><strong>Timing: 4 minutes. Core of the presentation.</strong></p>
     <p><strong>Days 1-30:</strong> "First thing: pause the governance forums. Not permanently, but to reset the agenda so when people come back, they come back for a reason. In the meantime, I go to them. 8-10 stakeholder interviews, one question: what data problem costs you time or money right now? Then I pick the most visible one, fix it with governance involvement, and publicize the result. That first win is what reopens the door."</p>
+    <p>"I have done this exact pattern: at my current organization, I ran stakeholder listening sessions across operations, safety, finance, and IT, then used the pain points to prioritize governance coverage. The first wins came from fixing data quality issues the business was already bleeding from."</p>
     <p><strong>Days 31-60:</strong> "Once I have credibility from that first win, I simplify. One policy, one ownership standard, a Data Owner charter that is 5 bullets. Relaunch one governance forum, monthly, with actual decision authority."</p>
     <p><strong>Days 61-90:</strong> "Then I measure. 5-8 KPIs tied to what the business cares about. I build a one-page dashboard and present it. That dashboard is the governance program's insurance policy."</p>
   </div>
 </div>
 
+<!-- ==================== SLIDE 5: STOP / SIMPLIFY / REMOVE ==================== -->
 <div class="slide-container" id="slide-5">
   <div class="slide light">
     <div class="slide-accent-img slide-accent-tr anim-item d9" style="width:200px;height:110px;top:32px;right:40px;"><img src="s5.jpg" alt=""></div>
@@ -735,6 +754,7 @@ body.fullscreen .speaker-notes { display: none; }
   </div>
 </div>
 
+<!-- ==================== SLIDE 6: ADOPTION & OPERATING RESET ==================== -->
 <div class="slide-container" id="slide-6">
   <div class="slide warm">
     <div class="slide-accent-img slide-accent-br anim-item d8" style="width:200px;height:130px;bottom:40px;right:40px;"><img src="s6.jpg" alt=""></div>
@@ -745,23 +765,27 @@ body.fullscreen .speaker-notes { display: none; }
         <table class="from-to">
           <thead><tr><th style="width:45%">From (Current)</th><th style="width:10%"></th><th style="width:45%">To (Reset)</th></tr></thead>
           <tbody>
-            <tr><td class="from-cell">Governance as a gate: approve or reject</td><td class="arrow-cell">→</td><td class="to-cell">Governance as a service: enable and improve</td></tr>
-            <tr><td class="from-cell">Councils as status meetings</td><td class="arrow-cell">→</td><td class="to-cell">Forums with decision authority</td></tr>
-            <tr><td class="from-cell">All data governed equally</td><td class="arrow-cell">→</td><td class="to-cell">Tiered governance: priority data first</td></tr>
-            <tr><td class="from-cell">Data Owners as title holders</td><td class="arrow-cell">→</td><td class="to-cell">Data Owners as decision-makers</td></tr>
-            <tr><td class="from-cell">Governance polices compliance</td><td class="arrow-cell">→</td><td class="to-cell">Governance partners with delivery</td></tr>
-            <tr><td class="from-cell">No measurement of value</td><td class="arrow-cell">→</td><td class="to-cell">Quarterly reporting tied to business outcomes</td></tr>
+            <tr><td class="from-cell">Governance as a gate: approve or reject</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Governance as a service: enable and improve</td></tr>
+            <tr><td class="from-cell">Councils as status meetings</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Forums with decision authority</td></tr>
+            <tr><td class="from-cell">All data governed equally</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Tiered governance: priority data first</td></tr>
+            <tr><td class="from-cell">Data Owners as title holders</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Data Owners as decision-makers</td></tr>
+            <tr><td class="from-cell">Governance polices compliance</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Governance partners with delivery</td></tr>
+            <tr><td class="from-cell">No measurement of value</td><td class="arrow-cell">&rarr;</td><td class="to-cell">Quarterly reporting tied to business outcomes</td></tr>
           </tbody>
         </table>
       </div>
-      <div class="two-col" style="margin-top:28px;gap:24px;">
+      <div class="three-col" style="margin-top:28px;gap:20px;">
         <div class="anim-item d5" style="padding:20px 24px;background:var(--forest-light);border-radius:6px;border-left:3px solid var(--forest);">
           <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--forest);margin-bottom:8px;">Embedded in Delivery</div>
-          <p style="font-size:13.5px;line-height:1.55;color:var(--soft-black);">At my current organization, I embedded governance into tier-one delivery projects so data quality gates were part of the build, not a review after the fact. Product teams saw governance as a quality accelerator, not a speed bump.</p>
+          <p style="font-size:13px;line-height:1.55;color:var(--soft-black);">At my current organization, I embedded governance into tier-one delivery projects so data quality gates were part of the build, not a review after the fact. Product teams saw governance as a quality accelerator, not a speed bump.</p>
         </div>
-        <div class="anim-item d6" style="padding:20px 24px;background:var(--amber-light);border-radius:6px;border-left:3px solid var(--amber);">
+        <div class="anim-item d6" style="padding:20px 24px;background:var(--teal-light);border-radius:6px;border-left:3px solid var(--teal);">
+          <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">Structured Re-engagement</div>
+          <p style="font-size:13px;line-height:1.55;color:var(--soft-black);">Monthly governance communications, quarterly stakeholder satisfaction surveys, and lunch-and-learn sessions to rebuild awareness and drive adoption from the ground up.</p>
+        </div>
+        <div class="anim-item d7" style="padding:20px 24px;background:var(--amber-light);border-radius:6px;border-left:3px solid var(--amber);">
           <div style="font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--rust);margin-bottom:8px;">Aligned with Leadership</div>
-          <p style="font-size:13.5px;line-height:1.55;color:var(--soft-black);">This plan is a starting framework, not a mandate. In week one, I align priorities with the Director and calibrate against what the organization needs most urgently. The plan adapts to the environment, not the other way around.</p>
+          <p style="font-size:13px;line-height:1.55;color:var(--soft-black);">This plan is a starting framework, not a mandate. In week one, I align priorities with the Director and calibrate against what the organization needs most urgently. The plan adapts to the environment.</p>
         </div>
       </div>
     </div>
@@ -772,12 +796,15 @@ body.fullscreen .speaker-notes { display: none; }
   <div class="notes-content">
     <p><strong>Timing: 4 minutes.</strong></p>
     <p><strong>Re-engaging Data Owners:</strong> "Listening tour first, not training. Ask what is broken. Give them a visible win in their domain within 60 days. If governance does not help them, they will not help governance."</p>
-    <p><strong>Tiered certification:</strong> "Data assets that meet governance standards get certified. Certification becomes a quality signal the business values. It changes governance from a mandate to a mark of quality." Do NOT name "Seal of Trust." Describe the concept only.</p>
+    <p><strong>Structured engagement:</strong> "I built a formal communication cadence: monthly governance communications to stakeholders, quarterly satisfaction surveys to measure whether governance was perceived as useful, and lunch-and-learn sessions to build awareness organically. Adoption is not an event. It is a campaign."</p>
+    <p><strong>Tiered certification:</strong> "Data assets that meet governance standards get certified. Certification becomes a quality signal the business values. It changes governance from a mandate to a mark of quality. I have already conducted certification audits across five production systems. This is not a concept I am proposing; it is a framework I have operationalized." Do NOT name "Seal of Trust." Describe the concept only.</p>
+    <p><strong>Cross-functional coordination:</strong> "On our largest delivery project, the key win was not the volume of governance artifacts but the coordination across business stakeholders, IT delivery partners, and vendor teams. We captured requirements from diverse business units and brought them into the governance framework. That cross-functional model is what I would replicate here."</p>
     <p><strong>Delivery integration (for Nitin):</strong> "I built governance into tier-one delivery projects: data quality gates at key milestones, embedded in the project plan, not bolted on after delivery. The engineering discipline comes from Toyota production system training: define the standard, measure against it, improve continuously." This is Nitin's language. Use it.</p>
     <p><strong>Partnership signal (for Rachel):</strong> "This plan is a starting framework. In week one, I align priorities with you and calibrate. I operate with high autonomy but I bring you decisions, not surprises." This tells Rachel you will make her look good.</p>
   </div>
 </div>
 
+<!-- ==================== SLIDE 7: EXECUTIVE REPOSITIONING ==================== -->
 <div class="slide-container" id="slide-7">
   <div class="slide light">
     <div class="slide-accent-img slide-accent-tr anim-item d9" style="width:190px;height:120px;top:36px;right:44px;"><img src="s7.jpg" alt=""></div>
@@ -795,7 +822,7 @@ body.fullscreen .speaker-notes { display: none; }
           <div class="lang-item old">"We need more Data Stewards"</div>
           <div class="lang-item old">"The framework requires adoption"</div>
         </div>
-        <div class="lang-arrow"><span>→</span><span>→</span><span>→</span></div>
+        <div class="lang-arrow"><span>&rarr;</span><span>&rarr;</span><span>&rarr;</span></div>
         <div class="lang-col">
           <div class="col-title" style="color:var(--forest);">Start Saying</div>
           <div class="lang-item new">"Governance reduced incidents by X% this quarter"</div>
@@ -826,6 +853,7 @@ body.fullscreen .speaker-notes { display: none; }
   </div>
 </div>
 
+<!-- ==================== SLIDE 8: CLOSE ==================== -->
 <div class="slide-container" id="slide-8">
   <div class="slide forest" style="display:flex;align-items:center;">
     <div class="slide-bg-img" style="background-image:url('s8.jpg');width:50%;"></div>
@@ -845,16 +873,20 @@ body.fullscreen .speaker-notes { display: none; }
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">Business Value</div>
         </div>
         <div style="flex:1;">
-          <div style="font-family:var(--serif);font-size:32px;color:rgba(255,255,255,0.9);">1.2 → 3.4</div>
+          <div style="font-family:var(--serif);font-size:32px;color:rgba(255,255,255,0.9);">1.2 &rarr; 3.4</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">Maturity Uplift</div>
         </div>
         <div style="flex:1;">
           <div style="font-family:var(--serif);font-size:32px;color:rgba(255,255,255,0.9);">71 KPIs</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">Across 12 Business Units</div>
         </div>
+        <div style="flex:1;">
+          <div style="font-family:var(--serif);font-size:32px;color:rgba(255,255,255,0.9);">5 Systems</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:4px;">Tiered Governance Audits</div>
+        </div>
       </div>
       <div class="cover-meta">
-        <div class="cover-author anim-item anim-fade d8" style="color:rgba(255,255,255,0.35);">Perry Ham · CDMP · PMP</div>
+        <div class="cover-author anim-item anim-fade d8" style="color:rgba(255,255,255,0.35);">Perry Ham &middot; CDMP &middot; PMP</div>
         <div class="cover-date anim-item anim-fade d9" style="color:rgba(255,255,255,0.2);">Thank you</div>
       </div>
     </div>
@@ -899,7 +931,7 @@ function toggleNotes(btn) {
   btn.textContent = c.classList.contains('open') ? 'Hide Notes' : 'Speaker Notes';
 }
 
-// Intersection observer for animations and tracking current slide state robustly
+// Intersection observer for animations and slide tracking
 const animObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -914,7 +946,7 @@ const animObserver = new IntersectionObserver((entries) => {
       }
     }
   });
-}, { threshold: 0.5 }); // Increased threshold ensures it updates when a slide firmly takes screen focus
+}, { threshold: 0.5, rootMargin: '-10% 0px -10% 0px' });
 
 document.querySelectorAll('.slide-container').forEach(el => animObserver.observe(el));
 
@@ -925,6 +957,30 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
   else if (e.key === 'Escape') { document.body.classList.remove('fullscreen'); }
 });
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+const SWIPE_THRESHOLD = 50;
+
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  touchEndY = e.changedTouches[0].screenY;
+  const dx = touchEndX - touchStartX;
+  const dy = touchEndY - touchStartY;
+  // Only trigger if horizontal swipe is dominant and exceeds threshold
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+    if (dx < 0) { nextSlide(); }
+    else { prevSlide(); }
+  }
+}, { passive: true });
 
 // Trigger first slide animations
 setTimeout(() => {
